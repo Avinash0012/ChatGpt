@@ -1,0 +1,202 @@
+﻿@{
+    Layout = "";
+}
+
+<style>
+    * {
+        font-size: 1.2vw;
+        font-family: "Epilogue", sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        --scrollbarBG: #f0f0f0;
+        --thumbBG: #3f8cfc;
+        --primary-color: #007bff;
+        --background-color: #f5f5f5;
+        --card-bg: #ffffff;
+        --card-shadow: rgba(0, 0, 0, 0.2);
+        --border-radius: 10px;
+    }
+
+    body {
+        background-color: var(--background-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .card {
+        width: 40vw;
+        max-width: 800px;
+        min-width: 800px;
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 10px var(--card-shadow);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    #header {
+        background-color: var(--primary-color);
+        padding: 15px;
+        text-align: center;
+        border-top-left-radius: var(--border-radius);
+        border-top-right-radius: var(--border-radius);
+    }
+
+        #header h1 {
+            color: #fff;
+            font-size: 2.5vw;
+            font-family: "Finger Paint", cursive;
+        }
+
+    #message-section {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background: #f9f9f9;
+        border-bottom: 2px solid #eee;
+    }
+
+        #message-section .message {
+            max-width: 80%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 1.1vw;
+            border-radius: var(--border-radius);
+            position: relative;
+        }
+
+    #bot {
+        background-color: #e3f2fd;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+        color: #000;
+    }
+
+    #user {
+        background-color: var(--primary-color);
+        color: #fff;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+        text-align: right;
+        float: right;
+    }
+
+    #input-section {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+        background-color: #fff;
+    }
+
+        #input-section input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1vw;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+            #input-section input:focus {
+                border-color: var(--primary-color);
+            }
+
+    .send {
+        background: var(--primary-color);
+        border: 0;
+        cursor: pointer;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 10px;
+        transition: background 0.3s ease;
+    }
+
+        .send:hover {
+            background-color: #0056b3;
+        }
+
+        .send .circle {
+            width: 28px;
+            height: 28px;
+        }
+
+        .send i {
+            color: white;
+            font-size: 1.5vw;
+        }
+
+    /* Scrollbar Styling */
+    #message-section::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    #message-section::-webkit-scrollbar-thumb {
+        background-color: var(--thumbBG);
+        border-radius: 6px;
+    }
+
+    #message-section::-webkit-scrollbar-track {
+        background: var(--scrollbarBG);
+    }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400&family=Finger+Paint&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.1.2/css/material-design-iconic-font.min.css">
+
+<body>
+    <div class="card">
+        <div id="header">
+            <h1>Chatter Box!</h1>
+        </div>
+        <div id="message-section">
+            <div class="message" id="bot"><span id="bot-response">Hello.. I'm listening! Go on..</span></div>
+        </div>
+        <div id="input-section">
+            <input id="inputPrompt" type="text" placeholder="Type a message" autocomplete="off" autofocus="autofocus" />
+            <button class="send" onclick="sendMessage()">
+                <div class="circle"><i class="zmdi zmdi-mail-send"></i></div>
+            </button>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var sendMessage = () => {
+            var prompt = $("#inputPrompt").val();
+            $("#inputPrompt").val('');
+            addUserQuestion(prompt);
+            $.post('/Home/ChatBotInput', { prompt: prompt }).done((result) => {
+                addChat(result);
+            })
+        }
+
+        function addUserQuestion(Input) {
+            const mainDiv = document.getElementById("message-section");
+            let userDiv = document.createElement("div");
+            userDiv.id = "user";
+            userDiv.classList.add("message");
+            userDiv.innerHTML = `<span id="user-response">${Input}</span>`;
+            mainDiv.appendChild(userDiv);
+        }
+
+        function addChat(product) {
+            const mainDiv = document.getElementById("message-section");
+            let botDiv = document.createElement("div");
+            botDiv.id = "bot";
+            botDiv.classList.add("message");
+            botDiv.innerHTML = `<span id="bot-response">${product}</span>`;
+            mainDiv.appendChild(botDiv);
+            var scroll = document.getElementById("message-section");
+            scroll.scrollTop = scroll.scrollHeight;
+        }
+    </script>
+</body>
