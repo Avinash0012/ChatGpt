@@ -13,7 +13,7 @@ namespace ADOCRUD.Controllers
         private readonly IConfiguration _configuration;
 
 
-        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        public HomeController(ILogger<HomeController> logger, IConfiguration  configuration)
         {
             _logger = logger;
             _configuration = configuration;
